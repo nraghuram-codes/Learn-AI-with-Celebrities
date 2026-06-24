@@ -30,6 +30,11 @@ app.use(
         'https://learn-ai-with-celebrities.vercel.app'
       ]
       
+      // Allow all Vercel subdomains for this project
+      if (origin.includes('learn-ai-with-celebrities.vercel.app')) {
+        return callback(null, true)
+      }
+      
       if (allowedOrigins.includes(origin)) {
         callback(null, true)
       } else {
