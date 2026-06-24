@@ -1,6 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import { exec } from 'child_process'
+import { promisify } from 'util'
 
 import authRoutes from './routes/authRoutes.js'
 import courseRoutes from './routes/courseRoutes.js'
@@ -8,6 +10,8 @@ import adminRoutes from './routes/adminRoutes.js'
 import lecturerRoutes from './routes/lecturerRoutes.js'
 
 dotenv.config()
+
+const execAsync = promisify(exec)
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -61,8 +65,27 @@ app.use((req, res) => {
   })
 })
 
+// Run database migrations on startup
+async function runMigrations() {
+  try {
+    console.log('Running Prisma migrations...')
+    await execAsync('npx prisma generate')
+    await execAsync('npx prisma migrate deploy')
+    console.log('Migrations completed successfully')
+  } catch (error) {
+    console.error('Migration error:', error.message)
+    // Don't fail the server if migrations fail
+  }
+}
+
 // Start Server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-  console.log(`Environment: ${process.env.NODE_ENV}`)
-})
+const startServer = async () => {
+  await runMigrations()
+  
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+    console.log(`Environment: ${process.env.NODE_ENV}`)
+  })
+}
+
+startServer()
