@@ -84,15 +84,20 @@ app.use((req, res) => {
   })
 })
 
-// Run database migrations on startup
+// Run database migrations and seed on startup
 async function runMigrations() {
   try {
     console.log('Running Prisma migrations...')
     await execAsync('npx prisma generate')
     await execAsync('npx prisma migrate deploy')
     console.log('Migrations completed successfully')
+    
+    // Seed the database
+    console.log('Seeding database...')
+    await execAsync('node prisma/seed.js')
+    console.log('Database seeded successfully')
   } catch (error) {
-    console.error('Migration error:', error.message)
+    console.error('Migration/Seed error:', error.message)
     // Don't fail the server if migrations fail
   }
 }
