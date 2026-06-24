@@ -19,9 +19,23 @@ const PORT = process.env.PORT || 5000
 // Middleware
 app.use(
   cors({
-    origin:
-      process.env.CORS_ORIGIN ||
-      'http://localhost:3000',
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true)
+      
+      // Allow the configured CORS origin or localhost for development
+      const allowedOrigins = [
+        process.env.CORS_ORIGIN,
+        'http://localhost:3000',
+        'https://learn-ai-with-celebrities.vercel.app'
+      ]
+      
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
     credentials: true
   })
 )
