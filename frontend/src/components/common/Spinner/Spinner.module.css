@@ -1,0 +1,45 @@
+.spinner {
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+.small {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.medium {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+.large {
+  width: 60px;
+  height: 60px;
+  border-width: 4px;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+}
+
+.primary {
+  border-color: rgba(99, 102, 241, 0.2);
+  border-top-color: var(--primary-color);
+}
+
+.secondary {
+  border-color: rgba(139, 92, 246, 0.2);
+  border-top-color: var(--secondary-color);
+}
+
+.white {
+  border-color: rgba(255, 255, 255, 0.15);
+  border-top-color: white;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

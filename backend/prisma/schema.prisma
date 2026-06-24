@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("student")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  enrollments Enrollment[]
+  progress    Progress[]
+}
+
+model Course {
+  id                String   @id @default(uuid())
+  title             String
+  description       String
+  category          String
+  duration          String
+  lessons           Int
+  price             Int
+  rating            Float    @default(0)
+  image             String?
+  learningOutcomes String[]
+  videoUrl          String?
+  videoScript       String?
+  videoStatus       String   @default("not_generated")
+  selectedLecturerId String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  enrollments Enrollment[]
+  progress    Progress[]
+}
+
+model Lecturer {
+  id          String   @id @default(uuid())
+  name        String
+  bio         String
+  image       String?
+  specialties String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Enrollment {
+  id        String   @id @default(uuid())
+  userId    String
+  courseId  String
+  enrolledAt DateTime @default(now())
+  progress  Int      @default(0)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+model Progress {
+  id         String   @id @default(uuid())
+  userId     String
+  courseId   String
+  lessonId   String
+  percentage Int      @default(0)
+  completed  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId, lessonId])
+}
